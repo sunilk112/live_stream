@@ -1,4 +1,5 @@
 # live_stream
+<<<<<<< HEAD
 
 A new Flutter project.
 
@@ -15,3 +16,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+Live stream project with Clean Architecture and MVVM 
+>>>>>>> b1919ab33ce7dd42843411fa0623e6b91ab10f3d
