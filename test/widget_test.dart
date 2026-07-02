@@ -1,30 +1,41 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+// Smoke test for the Splash screen: it renders the logo + tagline, then after
+// the splash duration navigates to the Login route.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:live_stream/main.dart';
+import 'package:live_stream/features/splash/presentation/view/splash_page.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Splash shows logo then routes to Login', (tester) async {
+    // A minimal router (splash -> stub login) so navigation has a destination
+    // without pulling in get_it-backed pages.
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          name: 'splash',
+          builder: (_, _) => const SplashPage(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: 'login',
+          builder: (_, _) => const Scaffold(body: Text('LOGIN')),
+        ),
+      ],
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
+    expect(find.text('Go Live • Stay Alive'), findsOneWidget);
+
+    // Let the splash timer elapse and the navigation settle.
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+
+    expect(find.text('LOGIN'), findsOneWidget);
   });
 }
